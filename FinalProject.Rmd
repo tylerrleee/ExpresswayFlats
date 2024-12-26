@@ -1,0 +1,94 @@
+---
+title: "TLe_FinalProject"
+author: "Tien Le"
+date: "2024-12-09"
+output:
+html_document:
+df_print: paged
+pdf_document: default
+bibliography: finalproj.bib
+---
+# Abstract
+
+# Introduction 
+
+# Data
+
+My data came from the Singapore Housing Development Board Board, National Map Line (SLA) and OneMap Reverse Geocode. This data represents 220,971 rows and records of the resale prices of Singapore public housing (HDB) flats or apartments from the years 2015 to 2024. In this project, we will be creating 3 fit models with **resale_price** as the response, **storey_range_category and distance from expressway** as the predictors. \
+
+**resale_price**: transaction price (in Singapore dollars) \
+**flat_type**: type of flat (e.g. 1-room, 2-room, 5-room, executive) \ 
+**storey_range_category**: categorical variable created based on "storey_range" (Low (01-06); Low-Mid (07-12); Mid (13-18); High (19-30); Very High (>30))\
+**distance_from_expressway**: distance from the building to the nearest expressway (<=50m, 51-100m, 101-150m, 151-300m, 301-500m, >500m)
+
+This data is significant because it provides key information regarding the housing market of Singapore, which over 80% of Singaporean residents live in public housing and 90% own their home [@hdbPublicHousing].
+
+# Understanding the data
+
+## Reading the data
+```{r read csv}
+library(dplyr)
+SG.flats <- read.csv("/Users/tienle/Downloads/hdbpresaleprices.csv")
+SG.flats <- na.omit(SG.flats)
+
+## Remove unused columns and information
+SG.flats <- SG.flats |> select(year, resale_price, flat_type, storey_range_category, distance_from_expressway, -town,-block,-street_name,-storey_range,-floor_area_sqm,-remaining_lease_years)
+
+summary(SG.flats)
+```
+There are `r sum(is.na(SG.flats))` missing values in the dataset.
+
+Taking a quick glance at the dataset, 220971 total, they were captured from 2015-2024. Normally, the 9 year-range of prices should not be comparable due to inflation, the pandemic, insurance premiums and et cetera. However, this might be the case for the U.S., where there was a 4.3% increase in house prices in Q2 2024 (reference here). In contrast, Singapore's housing market saw a mere 1.39% increase in 2024 (reference here), so we are not separating the resale flat prices by different years, due to the lower significance in housing price change. Instead, we will be focus on the effects of amenities like the MRT on flats resale prices in Singapore. \
+
+
+
+## Signifance of these variables
+
+```{r Price Surface Level Relationship, fig.keep='all'}
+library(ggplot2)
+
+
+ggplot(SG.flats, aes(x = flat_type, y = resale_price)) + 
+  geom_bar(stat = "identity", fill = "lightgreen", color = "lightgreen") + 
+  ylim(0, max(SG.flats$resale_price)) +
+  labs(x = "Flat Type", y = "Average Resale Price (SGD)", title = "Average Resale Price by Flat Type") +
+  theme(legend.position = "none")
+  
+ggplot(SG.flats, aes(x = storey_range_category, y = resale_price)) + 
+  geom_bar(stat = "identity", fill = "lightblue", color = "lightblue") + 
+  ylim(0, max(SG.flats$resale_price)) +
+  labs(x = "Range Category", y = "Average Resale Price (SGD)", title = "Average Resale Price by Range Category") +
+  theme(legend.position = "none")
+
+ggplot(SG.flats, aes(x = distance_from_expressway, y = resale_price), color) + 
+  geom_bar(stat = "identity", fill = "lightpink", color = "lightpink") + 
+  ylim(0, max(SG.flats$resale_price)) +
+  labs(x = "Distance from Expressway", y = "Average Resale Price (SGD)", title = "Average Resale Price by Distance from Expressway") +
+  theme(legend.position = "none")
+
+flattypeMedian <- median(SG.flats$flat_type)
+storey_rangeMedian <- median(SG.flats$storey_range_category)
+distance_fromexpressMedian <- median(SG.flats$distance_from_expressway)
+
+```
+
+Based on the barplots, the most COMMON flats seem to be dominated by the `r flattypeMedian` flat type, flats that are `r storey_rangeMedian` floors and `r distance_fromexpressMedian` away from the expressway.\ 
+Based on the observations, we can make a few predictions: \
+- As the size of flats increase, flat_type as reference, the resale price does not follow an ascending trend, but smaller and private flats are valued on a higher price. \
+- Flats on the middle levels, Low-Mid (07-12) and High (19-30), are more valuable than those on the lowest and highest. Possibly due to convenience from accessing elevators, stairs and amenities on the mid-level, and avoiding noise and providing a sense of superiority by avoiding the low levels. 
+- Flats that are far away from the expressway are valued higher than others due to noise, pollution and the owner's ability to commute without using public transportation. 
+
+Note: Some outliers we would not consider is the executive and multi-generation flats, due to its limited availability and extension governmenet application to acquire those spaces. For example, executive and multi-generation flats are only available to Singapore citizens and permanent residents family, despite having almost 40% of occupants being foreigners.
+
+ 
+# Linear Model on Individual Variables
+```{r Flats Resale Price Prediction Model} 
+flats.fit <- lm(resale_price ~ distance_from_expressway + storey_range_category, data = SG.flats)
+summary(flats.fit)
+
+```
+
+
+
+
+
