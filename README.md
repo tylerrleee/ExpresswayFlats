@@ -47,5 +47,4 @@ This project explores how **proximity to expressways** and **floor level (storey
 ## 🎓 Course Info
 
 This project was submitted as the final for:  
-**[Course Name, e.g., Data Analytics with R / Regression Methods]**  
 University of Florida – Fall 2024
