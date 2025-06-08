@@ -1,5 +1,5 @@
 
-# 🏠 Expressway Flats: Predicting Resale HDB Prices in Singapore  
+#  Expressway Flats: Predicting Resale HDB Prices in Singapore  
 ### Data Science & Regression Modeling – R Project (Fall 2024)
 
 This project explores how **proximity to expressways** and **floor level (storey range)** impact resale prices of HDB flats in Singapore. It was completed as a final project for a course focused on **statistical analysis and regression modeling** using R.
