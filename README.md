@@ -4,6 +4,8 @@
 
 This project explores how **proximity to expressways** and **floor level (storey range)** impact resale prices of HDB flats in Singapore. It was completed as a final project for a course focused on **statistical analysis and regression modeling** using R.
 
+Data from https://data.gov.sg/collections/189/view
+
 ## Project Objective
 
 - Evaluate how **transportation access** and **vertical positioning (storey)** affect property value.
